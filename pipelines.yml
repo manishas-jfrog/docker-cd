@@ -16,7 +16,7 @@ resources:
   - name: myPropertyBag
     type: PropertyBag
     configuration:
-      status: success
+      status: 0
 
 pipelines:
   - name: my_scratchpad_pipeline
@@ -35,4 +35,4 @@ pipelines:
           onSuccess:
             - echo "hello world"
           onFailure:
-            - write_output myPropertyBag status=failed
+            - write_output myPropertyBag status=1
