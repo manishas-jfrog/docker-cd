@@ -1,0 +1,38 @@
+template: true   # required for local templates
+valuesFilePath: ./values.yml
+
+resources:
+  - name: myScratchpadRepo
+    type: GitRepo
+    configuration:
+      # SCM integration where the repository is located
+      gitProvider: {{ .Values.myRepo.gitProvider }} # this will be replaced from values.yml
+      # Repository path, including org name/repo name
+      path: {{ .Values.myRepo.path }} # this will be replaced from values.yml
+      branches:
+        # Specifies which branches will trigger dependent steps
+        include: master
+
+  - name: myPropertyBag
+    type: PropertyBag
+    configuration:
+      status: success
+
+pipelines:
+  - name: my_scratchpad_pipeline
+    steps:
+      - name: p1_s1
+        type: Bash
+        configuration:
+          inputResources:
+            # Sets up step to be triggered when there are commit events to myFirstRepo
+            - name: myScratchpadRepo
+          outputResources:
+            - name: myPropertyBag
+        execution:
+          onExecute:
+            - exit 0
+          onSuccess:
+            - echo "hello world"
+          onFailure:
+            - write_output myPropertyBag status=failed
