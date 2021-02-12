@@ -31,7 +31,7 @@ pipelines:
             - name: myPropertyBag
         execution:
           onExecute:
-            - exit 0
+            - exit 1
           onSuccess:
             - echo "hello world"
           onFailure:
