@@ -2,37 +2,33 @@ template: true   # required for local templates
 valuesFilePath: ./values.yml
 
 resources:
-  - name: myScratchpadRepo
-    type: GitRepo
+  - name: docker_promoted_build
+    type: BuildInfo
     configuration:
-      # SCM integration where the repository is located
-      gitProvider: {{ .Values.myRepo.gitProvider }} # this will be replaced from values.yml
-      # Repository path, including org name/repo name
-      path: {{ .Values.myRepo.path }} # this will be replaced from values.yml
-      branches:
-        # Specifies which branches will trigger dependent steps
-        include: master
-
-  - name: myPropertyBag
-    type: PropertyBag
-    configuration:
-      status: 0
+      sourceArtifactory: {{ .Values.artifactory }}
 
 pipelines:
-  - name: my_scratchpad_pipeline
+  - name: docker_promote
     steps:
-      - name: p1_s1
+      - name: promoteBuild
         type: Bash
         configuration:
           inputResources:
             # Sets up step to be triggered when there are commit events to myFirstRepo
-            - name: myScratchpadRepo
+            - name: docker_sample_build
           outputResources:
-            - name: myPropertyBag
+            - name: docker_promoted_build
         execution:
           onExecute:
-            - exit 1
-          onSuccess:
-            - echo "hello world"
-          onFailure:
-            - write_output myPropertyBag status=1
+            - write_output docker_promoted_build buildName=$res_docker_sample_build_buildName buildNumber=$res_docker_sample_build_buildNumber
+
+      - name: deployBuild
+        type: Bash
+        configuration:
+          inputResources:
+            # Sets up step to be triggered when there are commit events to myFirstRepo
+            - name: docker_promoted_build
+        execution:
+          onExecute:
+            - echo "deploying application"
+    
