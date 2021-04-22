@@ -1,4 +1,4 @@
 myRepo:
   gitProvider: manishas_jfrog
   path: manishas-jfrog/docker-cd
-  artifactory: demoArt
+artifactory: demoArt
