@@ -2,14 +2,14 @@ template: true   # required for local templates
 valuesFilePath: ./values.yml
 
 resources:
-  - name: docker_sample_build
+  - name: docker_orig_build
     type: BuildInfo
     configuration:
       sourceArtifactory: {{ .Values.artifactory }}
       buildName: build_base_image
       buildNumber: 5
       
-  - name: docker_promoted_build
+  - name: docker_prom_build
     type: BuildInfo
     configuration:
       sourceArtifactory: {{ .Values.artifactory }}
@@ -22,9 +22,9 @@ pipelines:
         configuration:
           inputResources:
             # Sets up step to be triggered when there are commit events to myFirstRepo
-            - name: docker_sample_build
+            - name: docker_orig_build
           outputResources:
-            - name: docker_promoted_build
+            - name: docker_prom_build
         execution:
           onExecute:
             - write_output docker_promoted_build buildName=$res_docker_sample_build_buildName buildNumber=$res_docker_sample_build_buildNumber
@@ -34,7 +34,7 @@ pipelines:
         configuration:
           inputResources:
             # Sets up step to be triggered when there are commit events to myFirstRepo
-            - name: docker_promoted_build
+            - name: docker_prom_build
         execution:
           onExecute:
             - echo "deploying application"
