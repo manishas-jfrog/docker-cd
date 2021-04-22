@@ -23,6 +23,7 @@ pipelines:
           inputResources:
             # Sets up step to be triggered when there are commit events to myFirstRepo
             - name: docker_orig_build
+              trigger: false
           outputResources:
             - name: docker_prom_build
         execution:
